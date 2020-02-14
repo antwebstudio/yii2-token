@@ -16,6 +16,21 @@ class TokenCest
     public function _after(UnitTester $I)
     {
     }
+
+    // tests
+    public function testSetDuration(UnitTester $I)
+    {
+		$duration = 30;
+		
+		$token = new Token;
+		$token->setDuration($duration);
+		$expected = (new DateTime)->addSeconds($duration);
+		$I->assertEquals($expected, $token->expireAt);
+		
+		$token = new Token;
+		$token->setDuration(null);
+		$I->assertEquals(null, $token->expireAt);
+    }
 	
 	public function testGenerate(UnitTester $I) {
 		$now = (new \yii\db\Query)->select(new \yii\db\Expression('NOW() as now'))->one();

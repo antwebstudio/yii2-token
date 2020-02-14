@@ -76,7 +76,7 @@ class Token extends ActiveRecord implements Expirable
         return new TokenQuery(get_called_class());
     }
 
-    public static function generate($type, $duration) {
+    public static function generate($type, $duration, $queryParams = null) {
         $token = new self;
 
         $token->type = $type;
@@ -84,6 +84,9 @@ class Token extends ActiveRecord implements Expirable
 			$token->duration = $duration;
 		} else {
 			$token->expire_at = null;
+		}
+		if (isset($queryParams)) {
+			$token->queryParams = $queryParams;
 		}
         $token->token = self::createTokenKey();
 
@@ -139,8 +142,10 @@ class Token extends ActiveRecord implements Expirable
 
     public function setDuration($duration)
     {
-		$expire = new DateTime(time() + $duration);
-        $this->expire_at = $expire->format(DateTime::FORMAT_MYSQL);
+		if (isset($duration)) {
+			$expire = new DateTime(time() + $duration);
+			$this->expire_at = $expire->format(DateTime::FORMAT_MYSQL);
+		}
     }
 
     public function getUser()
@@ -161,6 +166,10 @@ class Token extends ActiveRecord implements Expirable
     {
         return $this->hasOne(UserInvite::className(), ['token_id' => 'id']);
     }
+	
+	public function getExpireAt() {
+		return $this->expire_at;
+	}
 
     public static function createTokenString($data, $algo = self::TOKEN_ALGO, $salt = self::TOKEN_SALT)
     {
