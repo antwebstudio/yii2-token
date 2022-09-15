@@ -24,11 +24,7 @@
         {
             "type": "composer",
             "url": "https://asset-packagist.org"
-        },
-		{
-			"type": "composer",
-			"url": "http://packagist.antwebstudio.com"
-		}
+        }
 	],
 	"scripts": {
 		"post-install-cmd": "@setup",
